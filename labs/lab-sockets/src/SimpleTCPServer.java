@@ -3,6 +3,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class SimpleTCPServer {
     private ServerSocket serverSocket;
@@ -15,22 +16,26 @@ public class SimpleTCPServer {
         System.out.println("[S1] Criando server socket para aguardar conexões de clientes em loop");
         serverSocket = new ServerSocket(port);
         while (serverSocket.isBound()) {
-            
+
             // Aguarda conexao de novo cliente (bloqueante)
             System.out.println("[S2] Aguardando conexão em: " + serverSocket.getLocalSocketAddress());
             socket = serverSocket.accept();
-            
+
             // Conexao estabelecida, obtem canais de entrada e saida de dados com cliente
             System.out.println("[S3] Conexão estalecida com cliente:" + socket.getRemoteSocketAddress());
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
-            
+
             // Recebe mensagem do cliente do canal de entrada
             String msg = input.readUTF();
             System.out.println("[S4] Mensagem recebida de " + socket.getRemoteSocketAddress() + ": " + msg);
-            
+
             // Envia resposta ao cliente no canal de saida
-            String reply = msg.toUpperCase();
+            System.out.print("Digite uma mensagem: ");
+            Scanner scanner = new Scanner(System.in);
+            String reply = scanner.nextLine();
+            scanner.close();
+
             output.writeUTF(reply);
             System.out.println("[S5] Mensagem enviada para " + socket.getRemoteSocketAddress() + ": " + reply);
         }
@@ -42,6 +47,7 @@ public class SimpleTCPServer {
         socket.close();
         serverSocket.close();
     }
+
     public static void main(String[] args) {
         int serverPort = 6666;
         try {
