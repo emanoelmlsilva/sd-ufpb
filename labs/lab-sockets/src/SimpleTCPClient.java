@@ -10,29 +10,34 @@ public class SimpleTCPClient {
     private DataOutputStream output;
 
     public void start(String serverIp, int serverPort) throws IOException {
-        // Cria socket de comunicacao com o servidor e obtem canais de entrada e saida
-        System.out.println("[C1] Conectando com servidor " + serverIp + ":" + serverPort);
-        socket = new Socket(serverIp, serverPort);
-        input = new DataInputStream(socket.getInputStream());
-        output = new DataOutputStream(socket.getOutputStream());
 
-        // Espera mensagem ser digitada da entrada padrão (teclado)
-        System.out.println("[C2] Conexão estabelecida, eu sou o cliente: " + socket.getLocalSocketAddress());
-        System.out.print("Digite uma mensagem: ");
         Scanner scanner = new Scanner(System.in);
-        String msg = scanner.nextLine();
-        scanner.close();
-        
-        // Envia mensagem para o servidor no canal de saida
-        System.out.println("[C3] Enviando mensagem para servidor");
-        output.writeUTF(msg);
-        System.out.println("[C4] Mensagem enviada, recebendo resposta");
-        
-        // Recebendo resposta do servidor
-        String response = input.readUTF();
-        System.out.println("[C5] Resposta recebida: " + response);
+        String msg = "";
+
+        while (!msg.equals("sair")) {
+            // Cria socket de comunicacao com o servidor e obtem canais de entrada e saida
+            System.out.println("[C1] Conectando com servidor " + serverIp + ":" + serverPort);
+            socket = new Socket(serverIp, serverPort);
+            input = new DataInputStream(socket.getInputStream());
+            output = new DataOutputStream(socket.getOutputStream());
+
+            // Espera mensagem ser digitada da entrada padrão (teclado)
+            System.out.println("[C2] Conexão estabelecida, eu sou o cliente: " + socket.getLocalSocketAddress());
+            System.out.print("Digite uma mensagem ou sair para encerra a comunicação: ");
+            msg = scanner.nextLine();
+
+            // Envia mensagem para o servidor no canal de saida
+            System.out.println("[C3] Enviando mensagem para servidor");
+            output.writeUTF(msg);
+            System.out.println("[C4] Mensagem enviada, recebendo resposta");
+
+            // Recebendo resposta do servidor
+            String response = input.readUTF();
+            System.out.println("[C5] Resposta recebida: " + response);
+        }
+
     }
- 
+
     public void stop() {
         try {
             input.close();
@@ -50,7 +55,7 @@ public class SimpleTCPClient {
             // Cria e roda cliente
             SimpleTCPClient client = new SimpleTCPClient();
             client.start(serverIp, serverPort);
-            
+
             // Finaliza cliente
             client.stop();
         } catch (IOException e) {
