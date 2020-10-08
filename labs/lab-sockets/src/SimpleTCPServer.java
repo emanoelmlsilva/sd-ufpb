@@ -34,7 +34,6 @@ public class SimpleTCPServer {
             System.out.print("Digite uma mensagem: ");
             Scanner scanner = new Scanner(System.in);
             String reply = scanner.nextLine();
-            scanner.close();
 
             output.writeUTF(reply);
             System.out.println("[S5] Mensagem enviada para " + socket.getRemoteSocketAddress() + ": " + reply);
